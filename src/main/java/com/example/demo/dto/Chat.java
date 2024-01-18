@@ -16,7 +16,7 @@ public class Chat {
     private UUID id;
 
     @Column(name = "user_id")
-    private UUID user_id;
+    private UUID userId;
 
     @Column(name = "chat_name")
     private String chatName;
