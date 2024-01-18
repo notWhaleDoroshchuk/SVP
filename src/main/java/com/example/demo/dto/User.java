@@ -6,9 +6,9 @@ import lombok.Data;
 import java.time.Instant;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "users")
-@Data
 public class User {
 
     @Id
