@@ -4,7 +4,7 @@ import com.example.demo.dto.Message;
 import com.example.demo.dto.User;
 import com.example.demo.listener.WebSocketEventListener;
 import com.example.demo.service.UserService;
-import com.example.demo.service.WebSocketTopicService;
+import com.example.demo.services.WebSocketTopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
