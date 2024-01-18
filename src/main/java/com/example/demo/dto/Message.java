@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 
+import com.example.demo.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,4 +33,6 @@ public class Message {
 
     @Column(name = "updated")
     private Instant updated;
+
+    private MessageType type;
 }
