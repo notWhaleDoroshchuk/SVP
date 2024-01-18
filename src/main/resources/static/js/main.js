@@ -3,13 +3,18 @@
 var usernamePage = document.querySelector('#username-page');
 var chatPage = document.querySelector('#chat-page');
 var usernameForm = document.querySelector('#usernameForm');
+var regButton = document.getElementById('regButton');
 var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
+var registrationPage = document.querySelector('#registration-page');
+var registrationForm = document.querySelector('#registrationForm');
 var connectingElement = document.querySelector('.connecting');
 
 var stompClient = null;
 var username = null;
+var password = null;
+var email = null;
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -17,16 +22,82 @@ var colors = [
 ];
 
 function connect(event) {
+    username = document.querySelector('#login_auth').value.trim();
+    password = document.querySelector('#password_auth').value.trim();
+
+    if(username && password) {
+
+        var dataToSend = {
+            login: username,
+            password: password
+        };
+
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        };
+
+        fetch('/authUser', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Ответ от сервера:', data);
+                usernamePage.classList.add('hidden');
+                registrationPage.classList.add('hidden');
+                chatPage.classList.remove('hidden');
+            })
+            .catch(error => {
+                alert('Произошла ошибка:' + error);
+                console.error('Произошла ошибка:', error);
+            });
+    }
+    event.preventDefault();
+}
+
+function showRegForm(event) {
     username = document.querySelector('#name').value.trim();
 
     if(username) {
         usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
+        chatPage.classList.add('hidden');
+        registrationPage.classList.remove('hidden');
+    }
+    event.preventDefault();
+}
 
-        var socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
+function registration(event) {
+    username = document.querySelector('#login_reg').value.trim();
+    password = document.querySelector('#password_reg').value.trim();
+    email = document.querySelector('#email_reg').value.trim();
 
-        stompClient.connect({}, onConnected, onError);
+    if(username && password && email) {
+        var dataToSend = {
+            login: username,
+            password: password
+        };
+
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        };
+
+        fetch('/registerUser', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Ответ от сервера:', data);
+                usernamePage.classList.remove('hidden');
+                chatPage.classList.add('hidden');
+                registrationPage.classList.add('hidden');
+            })
+            .catch(error => {
+                alert('Произошла ошибка:' + error);
+                console.error('Произошла ошибка:', error);
+            });
     }
     event.preventDefault();
 }
@@ -96,7 +167,7 @@ function onMessageReceived(payload) {
     messageArea.scrollTop = messageArea.scrollHeight;
 }
 
-
-
-usernameForm.addEventListener('submit', connect, true)
-messageForm.addEventListener('submit', sendMessage, true)
+regButton.addEventListener('click', showRegForm);
+usernameForm.addEventListener('submit', connect, true);
+registrationForm.addEventListener('submit', registration, true);
+messageForm.addEventListener('submit', sendMessage, true);

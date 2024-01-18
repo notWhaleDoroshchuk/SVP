@@ -15,16 +15,33 @@
             <h1 class="title">Введите имя и пароль</h1>
             <form id="usernameForm" name="usernameForm">
                 <div class="form-group">
-                    <input type="text" id="login" placeholder="Username" autocomplete="off" class="form-control" />
+                    <input type="text" id="login_auth" placeholder="Username" autocomplete="off" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <input type="text" id="password" placeholder="Password" autocomplete="off" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="accent username-submit">Присоединиться</button>
+                    <input type="text" id="password_auth" placeholder="Password" autocomplete="off" class="form-control" />
                 </div>
                 <div class="form-group">
                     <button type="submit" class="accent username-submit">Присоединиться</button>
+                    <button type="button" class="accent username-submit" id="regButton">Регистрация</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="registration-page">
+        <div class="username-page-container">
+            <form id="registrationForm" name="usernameForm">
+                <div class="form-group">
+                    <input type="text" id="login_reg" placeholder="Username" autocomplete="off" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="text" id="password_reg" placeholder="Password" autocomplete="off" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="text" id="email_reg" placeholder="Email" autocomplete="off" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="accent username-submit">Зарегистрироваться</button>
                 </div>
             </form>
         </div>
