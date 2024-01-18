@@ -1,7 +1,9 @@
 package com.example.demo.dto;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "chats")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Chat {
     @Id
     @GeneratedValue

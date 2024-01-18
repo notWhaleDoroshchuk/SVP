@@ -3,7 +3,7 @@ package com.example.demo.listener;
 import com.example.demo.dao.UsersRepository;
 import com.example.demo.dto.Message;
 import com.example.demo.enums.MessageType;
-import com.example.demo.service.UserService;
+import com.example.demo.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

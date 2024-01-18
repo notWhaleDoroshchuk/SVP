@@ -3,7 +3,9 @@ package com.example.demo.dto;
 
 import com.example.demo.enums.MessageType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -11,6 +13,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "messages")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message {
     @Id
     @GeneratedValue
