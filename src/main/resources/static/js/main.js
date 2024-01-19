@@ -3,7 +3,7 @@
 var usernamePage = document.querySelector('#username-page');
 var chatPage = document.querySelector('#chat-page');
 var usernameForm = document.querySelector('#usernameForm');
-var regButton = document.getElementById('regButton');
+var regButton = document.querySelector('#regButton');
 var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
@@ -41,7 +41,12 @@ function connect(event) {
         };
 
         fetch('/authUser', requestOptions)
-            .then(response => response.json())
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                return response.text();
+            })
             .then(data => {
                 console.log('Ответ от сервера:', data);
                 usernamePage.classList.add('hidden');
@@ -49,22 +54,24 @@ function connect(event) {
                 chatPage.classList.remove('hidden');
             })
             .catch(error => {
-                alert('Произошла ошибка:' + error);
-                console.error('Произошла ошибка:', error);
+                alert(error);
+                console.error(error);
             });
     }
     event.preventDefault();
 }
 
 function showRegForm(event) {
-    username = document.querySelector('#name').value.trim();
-
-    if(username) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.add('hidden');
-        registrationPage.classList.remove('hidden');
-    }
+    usernamePage.classList.add('hidden');
+    chatPage.classList.add('hidden');
+    registrationPage.classList.remove('hidden');
     event.preventDefault();
+}
+
+function backReg() {
+    usernamePage.classList.remove('hidden');
+    chatPage.classList.add('hidden');
+    registrationPage.classList.add('hidden');
 }
 
 function registration(event) {
@@ -75,7 +82,8 @@ function registration(event) {
     if(username && password && email) {
         var dataToSend = {
             login: username,
-            password: password
+            password: password,
+            email: email
         };
 
         var requestOptions = {
@@ -87,7 +95,12 @@ function registration(event) {
         };
 
         fetch('/registerUser', requestOptions)
-            .then(response => response.json())
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                return response.text();
+            })
             .then(data => {
                 console.log('Ответ от сервера:', data);
                 usernamePage.classList.remove('hidden');
@@ -95,8 +108,8 @@ function registration(event) {
                 registrationPage.classList.add('hidden');
             })
             .catch(error => {
-                alert('Произошла ошибка:' + error);
-                console.error('Произошла ошибка:', error);
+                alert(error);
+                console.error(error);
             });
     }
     event.preventDefault();

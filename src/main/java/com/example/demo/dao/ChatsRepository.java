@@ -12,6 +12,6 @@ import java.util.UUID;
 public interface ChatsRepository extends JpaRepository<Chat, UUID> {
     public List<Chat> findAllByUserId(UUID userId);
     void deleteByIdAndUserId(UUID id, UUID userId);
-    @Query("SELECT c FROM Chats c WHERE c.name LIKE %?1% AND c.user_id=?2")
+    @Query("SELECT c FROM Chat c WHERE c.chatName LIKE %?1% AND c.id=?2")
     List<Chat> findChatsByName(String name, UUID userId);
 }

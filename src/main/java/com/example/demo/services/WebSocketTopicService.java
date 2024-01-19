@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class WebSocketTopicService {
-    private SimpMessagingTemplate messagingTemplate;
+
+    private final  SimpMessagingTemplate messagingTemplate;
 
     public void sendToTopic(String topic, Object payload) {
         messagingTemplate.convertAndSend("/topic/" + topic, payload);

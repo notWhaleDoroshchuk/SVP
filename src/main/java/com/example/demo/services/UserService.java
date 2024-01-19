@@ -21,7 +21,8 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private UsersRepository usersRepository;
+
+    private final UsersRepository usersRepository;
 
     public ResponseEntity<String> registerUser(RegisterUserRequest request) {
         if(!validate(request.getEmail())) return new  ResponseEntity<>("Невалидный email", HttpStatus.BAD_REQUEST);

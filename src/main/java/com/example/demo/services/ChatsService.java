@@ -12,9 +12,10 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 public class ChatsService {
-    ChatsRepository chatsRepository;
-    MessagesRepository messagesRepository;
 
+    private final ChatsRepository chatsRepository;
+
+    private final MessagesRepository messagesRepository;
 
     public List<Chat> getAllUserChats(String userIdStr) {
         return chatsRepository.findAllByUserId(UUID.fromString(userIdStr));

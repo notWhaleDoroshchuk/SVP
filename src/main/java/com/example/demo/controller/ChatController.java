@@ -22,9 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
-    UserService userService;
 
-    WebSocketTopicService webSocketTopicService;
+    private final UserService userService;
+
+    private final WebSocketTopicService webSocketTopicService;
 
     @MessageMapping("/chat.sendMessage")
     public Message sendMessage(@Payload Message chatMessage) {
