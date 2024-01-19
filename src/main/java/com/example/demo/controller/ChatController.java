@@ -37,7 +37,7 @@ public class ChatController {
     public ResponseEntity<String> authUser(@RequestBody AuthUserRequest request) {
 
         return userService.getUser(request)
-                .map(user -> new ResponseEntity<>(user.toString(), HttpStatus.OK))
+                .map(user -> new ResponseEntity<>(user.getId().toString(), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND));
     }
 
