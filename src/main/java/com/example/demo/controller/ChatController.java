@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
+
     private final ChatsService chatService;
 
     private final UserService userService;

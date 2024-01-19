@@ -8,6 +8,7 @@ import com.example.demo.models.CreateChatRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
+@Service
 public class ChatsService {
     private final ChatsRepository chatsRepository;
 
