@@ -4,22 +4,63 @@ var usernamePage = document.querySelector('#username-page');
 var chatPage = document.querySelector('#chat-page');
 var usernameForm = document.querySelector('#usernameForm');
 var regButton = document.querySelector('#regButton');
+var createChatButton = document.querySelector('#createChatButton');
 var messageForm = document.querySelector('#messageForm');
 var messageInput = document.querySelector('#message');
 var messageArea = document.querySelector('#messageArea');
 var registrationPage = document.querySelector('#registration-page');
 var registrationForm = document.querySelector('#registrationForm');
 var connectingElement = document.querySelector('.connecting');
+var chatForm = document.querySelector('#chatForm');
+var createChatPage = document.querySelector('#create-chat-page');
+
 
 var stompClient = null;
 var username = null;
 var password = null;
 var email = null;
+var userId = "";
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
+
+document.addEventListener('DOMContentLoaded', function() {
+    var chatList = document.querySelector('.chat-list');
+
+    // Описание чатов
+    var chats = [
+        { id: 1, avatar: 'avatar1.jpg', title: 'Chat 1', lastMessage: 'Last message from Chat 1' },
+        { id: 2, avatar: 'avatar2.jpg', title: 'Chat 2', lastMessage: 'Last message from Chat 2' },
+        { id: 3, avatar: 'avatar3.jpg', title: 'Chat 3', lastMessage: 'Last message from Chat 3' },
+        //...добавьте здесь столько чатов, сколько хотите
+    ];
+
+    chats.forEach(function(chat) {
+        var chatItem = document.createElement('div');
+        chatItem.classList.add('chat-item');
+        chatItem.innerHTML = `
+      <div class="chat-avatar">
+        <img src="${chat.avatar}" alt="Avatar">
+      </div>
+      <div class="chat-info">
+        <h3>${chat.title}</h3>
+        <p>${chat.lastMessage}</p>
+      </div>
+    `;
+
+        chatItem.addEventListener('click', function() {
+            // Отправляем запрос на сервер
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'chat.php?id=' + chat.id);
+            xhr.send();
+        });
+
+        chatList.appendChild(chatItem);
+    });
+
+});
 
 function connect(event) {
     username = document.querySelector('#login_auth').value.trim();
@@ -49,6 +90,7 @@ function connect(event) {
             })
             .then(data => {
                 console.log('Ответ от сервера:', data);
+                userId = data;
                 usernamePage.classList.add('hidden');
                 registrationPage.classList.add('hidden');
                 chatPage.classList.remove('hidden');
@@ -68,10 +110,25 @@ function showRegForm(event) {
     event.preventDefault();
 }
 
+function showCreateChatForm(event) {
+    usernamePage.classList.add('hidden');
+    chatPage.classList.add('hidden');
+    registrationPage.classList.add('hidden');
+    createChatPage.classList.remove('hidden');
+    event.preventDefault();
+}
+
 function backReg() {
     usernamePage.classList.remove('hidden');
     chatPage.classList.add('hidden');
     registrationPage.classList.add('hidden');
+}
+
+function backChat() {
+    usernamePage.classList.add('hidden');
+    chatPage.classList.remove('hidden');
+    registrationPage.classList.add('hidden');
+    createChatPage.classList.add('hidden');
 }
 
 function registration(event) {
@@ -106,6 +163,47 @@ function registration(event) {
                 usernamePage.classList.remove('hidden');
                 chatPage.classList.add('hidden');
                 registrationPage.classList.add('hidden');
+            })
+            .catch(error => {
+                alert(error);
+                console.error(error);
+            });
+    }
+    event.preventDefault();
+}
+
+function createChat(event) {
+    var chatname = document.querySelector('#chat_name').value.trim();
+
+    if(chatname) {
+
+        var dataToSend = {
+            userid: userid,
+            name: chatname
+        };
+
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToSend)
+        };
+
+        fetch('/createChat', requestOptions)
+            .then(async response => {
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Ответ от сервера:', data);
+                userId = data;
+                usernamePage.classList.add('hidden');
+                registrationPage.classList.add('hidden');
+                chatPage.classList.remove('hidden');
+                createChatPage.classList.add('hidden');
             })
             .catch(error => {
                 alert(error);
@@ -181,6 +279,8 @@ function onMessageReceived(payload) {
 }
 
 regButton.addEventListener('click', showRegForm);
+createChatButton.addEventListener('click', showCreateChatForm);
 usernameForm.addEventListener('submit', connect, true);
+chatForm.addEventListener('submit', createChat, true);
 registrationForm.addEventListener('submit', registration, true);
 messageForm.addEventListener('submit', sendMessage, true);
