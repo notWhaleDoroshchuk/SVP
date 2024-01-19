@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "chats")
+@JsonSerialize
 @AllArgsConstructor
 @NoArgsConstructor
 public class Chat {
