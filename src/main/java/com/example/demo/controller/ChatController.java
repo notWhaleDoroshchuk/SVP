@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.Message;
 import com.example.demo.models.AuthUserRequest;
 import com.example.demo.models.CreateChatRequest;
+import com.example.demo.models.GetAllChatsResponse;
 import com.example.demo.models.RegisterUserRequest;
 import com.example.demo.services.ChatsService;
 import com.example.demo.services.UserService;
@@ -14,6 +15,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -49,9 +51,9 @@ public class ChatController {
     public ResponseEntity<String> crateChat(@RequestBody CreateChatRequest request) {
         return chatService.createChat(request);
     }
-//    @GetMapping("/getAllChats")
-//
-//    public ResponseEntity<String> getAllChats(@RequestBody Uer) {
-//        return chatService.createChat(request);
-//    }
+
+    @GetMapping("/getAllChats/{user_id}")
+    public GetAllChatsResponse getAllChats(@PathVariable String userId) {
+        return chatService.getAllUserChats(userId);
+    }
 }

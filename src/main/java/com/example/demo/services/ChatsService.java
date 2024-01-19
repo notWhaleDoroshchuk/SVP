@@ -4,13 +4,16 @@ import com.example.demo.dao.ChatsRepository;
 import com.example.demo.dao.MessagesRepository;
 import com.example.demo.dto.Chat;
 import com.example.demo.dto.Message;
+import com.example.demo.models.ChatData;
 import com.example.demo.models.CreateChatRequest;
+import com.example.demo.models.GetAllChatsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,8 +38,21 @@ public class ChatsService {
         }
     }
 
-    public List<Chat> getAllUserChats(String userIdStr) {
-        return chatsRepository.findAllByUserId(UUID.fromString(userIdStr));
+    public GetAllChatsResponse getAllUserChats(String userIdStr) {
+        var chatDataList = chatsRepository
+                .findAllByUserId(UUID.fromString(userIdStr))
+                .stream()
+                .map(chat -> new ChatData(chat.getId().toString(),
+                        chat.getChatName(),
+                        chat.getMessages()
+                                .stream()
+                                .sorted(Comparator.comparing(Message::getCreated))
+                                .toList()
+                                .get(chat.getMessages().size()-1)
+                                .getText()))
+                .toList();
+
+        return new GetAllChatsResponse(chatDataList);
     }
 
     public List<Message> getChatMessages(String id) {
