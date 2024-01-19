@@ -26,44 +26,57 @@ var colors = [
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
 
-document.addEventListener('DOMContentLoaded', function() {
+function getAllChats() {
     var chatList = document.querySelector('.chat-list');
 
-    var chats = function () {
-        var userid = globalUserId;
+    let chats = null;
 
-        if(userid) {
+    var userid = globalUserId;
 
-            var dataToSend = {
-                userId: userid
-            };
+    if(userid) {
 
-            var requestOptions = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dataToSend)
-            };
+        var requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
 
-            fetch('/getAllChats', requestOptions)
-                .then(async response => {
-                    if (!response.ok) {
-                        throw new Error(await response.json());
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Ответ от сервера:', data);
-                    return data;
-                })
-                .catch(error => {
-                    alert(error);
-                    console.error(error);
+        fetch('/getAllChats/' + userid, requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.json());
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Ответ от сервера:', data);
+                chats = data.chatDataList;
+                chats.forEach(function(chat) {
+                    var chatItem = document.createElement('div');
+                    chatItem.classList.add('chat-item');
+                    chatItem.innerHTML = `
+                          <div class="chat-info">
+                            <h3>${chat.name}</h3>
+                            <p>${chat.lastMessageText}</p>
+                          </div>
+                        `;
+                    chatItem.addEventListener('click', function() {
+                        // Отправляем запрос на сервер
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', 'chat.php?id=' + chat.id);
+                        xhr.send();
+                    });
+
+                    chatList.appendChild(chatItem);
                 });
-        }
-
+            })
+            .catch(error => {
+                alert(error);
+                console.error(error);
+            });
     }
+
 
     // Описание чатов
     // var chats = [
@@ -73,27 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     //     //...добавьте здесь столько чатов, сколько хотите
     // ];
 
-    chats.forEach(function(chat) {
-        var chatItem = document.createElement('div');
-        chatItem.classList.add('chat-item');
-        chatItem.innerHTML = `
-      <div class="chat-info">
-        <h3>${chat.title}</h3>
-        <p>${chat.lastMessage}</p>
-      </div>
-    `;
-
-        chatItem.addEventListener('click', function() {
-            // Отправляем запрос на сервер
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'chat.php?id=' + chat.id);
-            xhr.send();
-        });
-
-        chatList.appendChild(chatItem);
-    });
-
-});
+};
 function connect(event) {
     username = document.querySelector('#login_auth').value.trim();
     password = document.querySelector('#password_auth').value.trim();
@@ -126,6 +119,7 @@ function connect(event) {
                 usernamePage.classList.add('hidden');
                 registrationPage.classList.add('hidden');
                 chatPage.classList.remove('hidden');
+                getAllChats();
             })
             .catch(error => {
                 alert(error);

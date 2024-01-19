@@ -46,12 +46,13 @@ public class ChatsService {
                 .stream()
                 .map(chat -> new ChatData(chat.getId().toString(),
                         chat.getChatName(),
+                        chat.getMessages().size() > 0 ?
                         chat.getMessages()
                                 .stream()
                                 .sorted(Comparator.comparing(Message::getCreated))
                                 .toList()
                                 .get(chat.getMessages().size()-1)
-                                .getText()))
+                                .getText() : ""))
                 .toList();
 
         return new GetAllChatsResponse(chatDataList);
