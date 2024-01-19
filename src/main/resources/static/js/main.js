@@ -19,7 +19,7 @@ var stompClient = null;
 var username = null;
 var password = null;
 var email = null;
-var userId = "";
+let globalUserId = "";
 
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
@@ -29,21 +29,54 @@ var colors = [
 document.addEventListener('DOMContentLoaded', function() {
     var chatList = document.querySelector('.chat-list');
 
+    var chats = function () {
+        var userid = globalUserId;
+
+        if(userid) {
+
+            var dataToSend = {
+                userId: userid
+            };
+
+            var requestOptions = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataToSend)
+            };
+
+            fetch('/getAllChats', requestOptions)
+                .then(async response => {
+                    if (!response.ok) {
+                        throw new Error(await response.json());
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Ответ от сервера:', data);
+                    return data;
+                })
+                .catch(error => {
+                    alert(error);
+                    console.error(error);
+                });
+        }
+
+    }
+
     // Описание чатов
-    var chats = [
-        { id: 1, avatar: 'avatar1.jpg', title: 'Chat 1', lastMessage: 'Last message from Chat 1' },
-        { id: 2, avatar: 'avatar2.jpg', title: 'Chat 2', lastMessage: 'Last message from Chat 2' },
-        { id: 3, avatar: 'avatar3.jpg', title: 'Chat 3', lastMessage: 'Last message from Chat 3' },
-        //...добавьте здесь столько чатов, сколько хотите
-    ];
+    // var chats = [
+    //     { id: 1, title: 'Chat 1', lastMessage: 'Last message from Chat 1' },
+    //     { id: 2, title: 'Chat 2', lastMessage: 'Last message from Chat 2' },
+    //     { id: 3, title: 'Chat 3', lastMessage: 'Last message from Chat 3' },
+    //     //...добавьте здесь столько чатов, сколько хотите
+    // ];
 
     chats.forEach(function(chat) {
         var chatItem = document.createElement('div');
         chatItem.classList.add('chat-item');
         chatItem.innerHTML = `
-      <div class="chat-avatar">
-        <img src="${chat.avatar}" alt="Avatar">
-      </div>
       <div class="chat-info">
         <h3>${chat.title}</h3>
         <p>${chat.lastMessage}</p>
@@ -61,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
-
 function connect(event) {
     username = document.querySelector('#login_auth').value.trim();
     password = document.querySelector('#password_auth').value.trim();
@@ -90,7 +122,7 @@ function connect(event) {
             })
             .then(data => {
                 console.log('Ответ от сервера:', data);
-                userId = data;
+                globalUserId = data;
                 usernamePage.classList.add('hidden');
                 registrationPage.classList.add('hidden');
                 chatPage.classList.remove('hidden');
@@ -174,11 +206,12 @@ function registration(event) {
 
 function createChat(event) {
     var chatname = document.querySelector('#chat_name').value.trim();
+    var userid = globalUserId;
 
     if(chatname) {
 
         var dataToSend = {
-            userid: userid,
+            userId: userid,
             name: chatname
         };
 
@@ -199,7 +232,7 @@ function createChat(event) {
             })
             .then(data => {
                 console.log('Ответ от сервера:', data);
-                userId = data;
+                globalUserId = data;
                 usernamePage.classList.add('hidden');
                 registrationPage.classList.add('hidden');
                 chatPage.classList.remove('hidden');
