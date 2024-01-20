@@ -15,7 +15,8 @@ var chatForm = document.querySelector('#chatForm');
 var createChatPage = document.querySelector('#create-chat-page');
 
 
-var stompClient = null;
+let stompClient = null;
+let globalChatId = null;
 var username = null;
 var password = null;
 var email = null;
@@ -62,9 +63,8 @@ function getAllChats() {
                           </div>
                         `;
                     chatItem.addEventListener('click', function() {
+                        globalChatId = chat.id;
                         // Отправляем запрос на сервер
-                        var socket = new SockJS('/ws');
-                        stompClient = Stomp.over(socket);
                         stompClient.connect({}, onConnected, onError);
                     });
 
@@ -119,6 +119,8 @@ function connect(event) {
                 usernamePage.classList.add('hidden');
                 registrationPage.classList.add('hidden');
                 chatPage.classList.remove('hidden');
+                var socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
                 getAllChats();
             })
             .catch(error => {
@@ -242,13 +244,16 @@ function createChat(event) {
 
 
 function onConnected() {
+
+    var chatid = globalChatId;
+    var userid = globalUserId;
     // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/public', onMessageReceived);
+    stompClient.subscribe('/topic/messages', onMessageReceived);
 
     // Tell your username to the server
-    stompClient.send("/app/chat.authUser",
+    stompClient.send("/app/addMessage",
         {},
-        JSON.stringify({sender: username, type: 'JOIN'})
+        JSON.stringify({userId: userid, type: 'JOIN', chatId: chatid})
     )
 
     connectingElement.classList.add('hidden');
@@ -262,13 +267,16 @@ function onError(error) {
 
 
 function sendMessage(event) {
+    var chatid = globalChatId;
     var messageContent = messageInput.value.trim();
+    var userid = globalUserId;
 
     if(messageContent && stompClient) {
         var chatMessage = {
-            sender: username,
-            content: messageInput.value,
-            type: 'CHAT'
+            userId: userid,
+            text: messageInput.value,
+            type: 'CHAT',
+            chatId: chatid
         };
 
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
@@ -280,25 +288,25 @@ function sendMessage(event) {
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
-
+    var chatid = globalChatId;
     var messageElement = document.createElement('li');
 
     if(message.type === 'JOIN') {
         messageElement.classList.add('event-message');
-        message.content = message.sender + ' присоединился!';
+        message.text = message.login + ' присоединился!';
     } else if (message.type === 'LEAVE') {
         messageElement.classList.add('event-message');
-        message.content = message.sender + ' покинул нас!';
+        message.text = message.login + ' покинул нас!';
     } else {
         messageElement.classList.add('chat-message');
         var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender + ':');
+        var usernameText = document.createTextNode(message.login + ':');
         usernameElement.appendChild(usernameText);
         messageElement.appendChild(usernameElement);
     }
 
     var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.content);
+    var messageText = document.createTextNode(message.text);
     textElement.appendChild(messageText);
     messageElement.appendChild(textElement);
     messageArea.appendChild(messageElement);
