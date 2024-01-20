@@ -91,13 +91,14 @@ public class ChatsService {
     public ResponseEntity addMessage(AddNewMessageRequest request) {
         var chatId = UUID.fromString(request.getChatId());
         var userId = UUID.fromString(request.getUserId());
-        var chat = chatsRepository.findById(chatId);
+        var chat = chatsRepository.findById(chatId).get();
         var message = new Message();
         MessageTopicEvent event;
-        message.setChat(chat.get());
         message.setUserId(userId);
         message.setText(request.getText());
         message.setType(request.getType());
+        chat.getMessages().add(message);
+        chatsRepository.save(chat);
         messagesRepository.save(message);
         event = buildMessageTopicEvent(userId, request.getType(), "", chatId);
         webSocketTopicService.sendToMessagesTopic(event);
