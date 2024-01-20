@@ -63,9 +63,9 @@ function getAllChats() {
                         `;
                     chatItem.addEventListener('click', function() {
                         // Отправляем запрос на сервер
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('GET', 'chat.php?id=' + chat.id);
-                        xhr.send();
+                        var socket = new SockJS('/ws');
+                        stompClient = Stomp.over(socket);
+                        stompClient.connect({}, onConnected, onError);
                     });
 
                     chatList.appendChild(chatItem);

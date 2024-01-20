@@ -22,8 +22,7 @@ public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
-    private SimpMessageSendingOperations messagingTemplate;
-
+    private final SimpMessageSendingOperations messagingTemplate;
     private UserService userService;
 
     @EventListener
@@ -36,7 +35,7 @@ public class WebSocketEventListener {
                 Message chatMessage = new Message();
                 chatMessage.setType(MessageType.LEAVE);
                 chatMessage.setUserId(user.getId());
-                messagingTemplate.convertAndSend("/topic/public", chatMessage);
+                messagingTemplate.convertAndSend("/topic/messages", chatMessage);
             });
         }
     }
