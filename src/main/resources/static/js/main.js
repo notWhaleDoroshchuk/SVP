@@ -279,7 +279,7 @@ function sendMessage(event) {
             chatId: chatid
         };
 
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+        stompClient.send("/app/addMessage", {}, JSON.stringify(chatMessage));
         messageInput.value = '';
     }
     event.preventDefault();
@@ -289,28 +289,30 @@ function sendMessage(event) {
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
     var chatid = globalChatId;
-    var messageElement = document.createElement('li');
+    if (message.chatId === chatid) {
+        var messageElement = document.createElement('li');
 
-    if(message.type === 'JOIN') {
-        messageElement.classList.add('event-message');
-        message.text = message.login + ' присоединился!';
-    } else if (message.type === 'LEAVE') {
-        messageElement.classList.add('event-message');
-        message.text = message.login + ' покинул нас!';
-    } else {
-        messageElement.classList.add('chat-message');
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.login + ':');
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
+        if (message.type === 'JOIN') {
+            messageElement.classList.add('event-message');
+            // message.text = message.login + ' присоединился!';
+        } else if (message.type === 'LEAVE') {
+            messageElement.classList.add('event-message');
+            // message.text = message.login + ' покинул нас!';
+        } else {
+            messageElement.classList.add('chat-message');
+            var usernameElement = document.createElement('span');
+            var usernameText = document.createTextNode(message.login + ':');
+            usernameElement.appendChild(usernameText);
+            messageElement.appendChild(usernameElement);
+        }
+
+        var textElement = document.createElement('p');
+        var messageText = document.createTextNode(message.text);
+        textElement.appendChild(messageText);
+        messageElement.appendChild(textElement);
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
     }
-
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(message.text);
-    textElement.appendChild(messageText);
-    messageElement.appendChild(textElement);
-    messageArea.appendChild(messageElement);
-    messageArea.scrollTop = messageArea.scrollHeight;
 }
 
 regButton.addEventListener('click', showRegForm);
