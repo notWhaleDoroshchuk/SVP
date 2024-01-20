@@ -64,8 +64,8 @@ function getAllChats() {
                         `;
                     chatItem.addEventListener('click', function() {
                         globalChatId = chat.id;
+                        onConnected();
                         // Отправляем запрос на сервер
-                        stompClient.connect({}, onConnected, onError);
                     });
 
                     chatList.appendChild(chatItem);
@@ -121,6 +121,7 @@ function connect(event) {
                 chatPage.classList.remove('hidden');
                 var socket = new SockJS('/ws');
                 stompClient = Stomp.over(socket);
+                stompClient.connect({}, onConnectedStomp, onError);
                 getAllChats();
             })
             .catch(error => {
@@ -247,16 +248,20 @@ function onConnected() {
 
     var chatid = globalChatId;
     var userid = globalUserId;
-    // Subscribe to the Public Topic
-    stompClient.subscribe('/topic/messages', onMessageReceived);
 
     // Tell your username to the server
-    stompClient.send("/app/addMessage",
+    var res = stompClient.send("/app/addMessage",
         {},
         JSON.stringify({userId: userid, type: 'JOIN', chatId: chatid})
     )
 
     connectingElement.classList.add('hidden');
+}
+
+function onConnectedStomp() {
+    // Subscribe to the Public Topic
+    stompClient.subscribe('/topic/messages', onMessageReceived);
+    console.log('Connected to STOMP');
 }
 
 

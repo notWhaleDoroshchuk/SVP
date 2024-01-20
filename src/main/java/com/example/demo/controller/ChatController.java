@@ -57,8 +57,8 @@ public class ChatController {
         return chatService.getAllChatMessages(chatIdStr);
     }
 
-    @PostMapping("/addMessage")
-    public  ResponseEntity addMessage(@RequestBody AddNewMessageRequest request){
+    @MessageMapping("/addMessage")
+    public ResponseEntity addMessage(@RequestBody AddNewMessageRequest request){
         return chatService.addMessage(request);
     }
 }
