@@ -75,4 +75,14 @@ public class ChatsService {
         return chatsRepository.findChatsByNameAndUserId(name, UUID.fromString(userIdStr));
     }
 
+    public ResponseEntity getAllChatMessages(String chatIdStr) {
+        var chatId = UUID.fromString(chatIdStr);
+        var chat = chatsRepository.findById(chatId);
+        if(chat.isPresent())
+            return new ResponseEntity<>(chat.get().getMessages(), HttpStatus.OK);
+        else
+            return new ResponseEntity<>("Чат не найден", HttpStatus.NOT_FOUND);
+    }
+
+
 }

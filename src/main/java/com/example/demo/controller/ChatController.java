@@ -54,4 +54,9 @@ public class ChatController {
     public ResponseEntity<GetAllChatsResponse> getAllChats(@PathVariable String userId) {
         return new ResponseEntity<>(chatService.getAllUserChats(userId),  HttpStatus.OK);
     }
+
+    @GetMapping("/getAllChatMessages/{chat_id}")
+    public ResponseEntity getAllChatMessages(@PathVariable String chatIdStr) {
+        return chatService.getAllChatMessages(chatIdStr);
+    }
 }
