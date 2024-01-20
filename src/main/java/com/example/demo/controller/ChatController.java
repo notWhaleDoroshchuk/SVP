@@ -1,10 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.Message;
-import com.example.demo.models.AuthUserRequest;
-import com.example.demo.models.CreateChatRequest;
-import com.example.demo.models.GetAllChatsResponse;
-import com.example.demo.models.RegisterUserRequest;
+import com.example.demo.models.*;
 import com.example.demo.services.ChatsService;
 import com.example.demo.services.UserService;
 import com.example.demo.services.WebSocketTopicService;
@@ -26,11 +23,11 @@ public class ChatController {
 
     private final WebSocketTopicService webSocketTopicService;
 
-    @MessageMapping("/chat.sendMessage")
-    public Message sendMessage(@Payload Message chatMessage) {
-        webSocketTopicService.sendToTopic(chatMessage.getChat().getId().toString(), chatMessage);
-        return chatMessage;
-    }
+//    @MessageMapping("/chat.sendMessage")
+//    public Message sendMessage(@Payload Message chatMessage) {
+//        webSocketTopicService.sendToTopic(chatMessage.getChat().getId().toString(), chatMessage);
+//        return chatMessage;
+//    }
 
     @PostMapping("/authUser")
     public ResponseEntity<String> authUser(@RequestBody AuthUserRequest request) {
@@ -58,5 +55,10 @@ public class ChatController {
     @GetMapping("/getAllChatMessages/{chat_id}")
     public ResponseEntity getAllChatMessages(@PathVariable String chatIdStr) {
         return chatService.getAllChatMessages(chatIdStr);
+    }
+
+    @PostMapping("/addMessage")
+    public  ResponseEntity addMessage(@RequestBody AddNewMessageRequest request){
+        return chatService.addMessage(request);
     }
 }
